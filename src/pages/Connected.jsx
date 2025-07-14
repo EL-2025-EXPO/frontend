@@ -38,6 +38,15 @@ function Connected() {
       console.error('Socket closed unexpectedly');
     };
 
+    socket.onopen = () => {
+      console.log("WebSocket 연결됨");
+    };
+    
+    socket.onerror = (e) => {
+      console.error("WebSocket 에러", e);
+    };
+    
+
     return () => socket.close();
   }, []);
 

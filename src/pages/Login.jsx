@@ -1,26 +1,32 @@
 import React from 'react';
-import '../styles/Login.css';
-import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 
-function Login() {
-  const navigate = useNavigate();
+export default function Login() {
+  const handleLoginSuccess = async (credentialResponse) => {
+    const token = credentialResponse.credential;
 
-  const handleLogin = () => {
-    
-    navigate("/connected");
+    try {
+      const response = await fetch('http://192.168.1.102:8000/auth/login/google-oauth2', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+
+      const result = await response.json();
+      console.log('Backend response:', result);
+      // 로그인 후 리디렉션 등 처리
+    } catch (error) {
+      console.error('Error sending token to backend:', error);
+    }
   };
 
   return (
-    <div className="login-container">
-      <div className="logo">
-        <h1>SORA</h1>
-        <p>임시로 글자만 넣어둠, 이미지로 대체예정</p>
-      </div>
-      <button className="login-button" onClick={handleLogin}>
-        Login
-      </button>
+    <div>
+      <h2>Login Page</h2>
+      <GoogleLogin
+        onSuccess={handleLoginSuccess}
+        onError={() => console.log('Login Failed')}
+      />
     </div>
   );
 }
-
-export default Login;
