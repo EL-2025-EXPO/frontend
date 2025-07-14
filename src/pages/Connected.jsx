@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/Connected.css';
 
 function Connected() {
@@ -25,6 +25,21 @@ function Connected() {
       showLangMenu: false,
     }
   ]);
+
+  useEffect(() => {
+    const socket = new WebSocket('ws://localhost:8000/ws/live-value/');
+
+    socket.onmessage = function (event) {
+      const data = JSON.parse(event.data);
+      setTranslatedList(data.value);
+    };
+
+    socket.onclose = function (e) {
+      console.error('Socket closed unexpectedly');
+    };
+
+    return () => socket.close();
+  }, []);
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text)
